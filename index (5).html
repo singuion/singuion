@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>
+        if (window.location.pathname !== '/' && window.location.pathname !== '/index.html' && !window.location.pathname.endsWith('.html')) {
+            window.location.href = '/404.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sin Guión | Podcast & Radio en Vivo</title>
+
+<link rel="icon" type="image/png" href="favicon.png">
+
+<meta property="og:title" content="Sin Guión">
+<meta property="og:description" content="Podcast & Radio en Vivo">
+<meta property="og:image" content="https://singuion.online/img/preview.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- VARIABLES DE COLOR Y FUENTES ORIGINALES --- */
+        :root {
+            --bg-dark: #050505;
+            --bg-darker: #000000;
+            --bg-card: rgba(25, 25, 25, 0.6);
+            --primary-red: #e60000;
+            --primary-red-hover: #ff1a1a;
+            --red-glow: rgba(230, 0, 0, 0.5);
+            --text-white: #ffffff;
+            --text-gray: #b3b3b3;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white); font-family: var(--font-main); line-height: 1.6; overflow-x: hidden;
+        }
+
+        /* --- BARRA SUPERIOR DE INFO --- */
+        #top-info-bar { position: fixed; top: 0; left: 0; width: 100%; height: 30px; background-color: var(--bg-darker); color: var(--text-gray); display: flex; justify-content: center; align-items: center; font-size: 0.8rem; font-weight: 700; z-index: 1002; border-bottom: 1px solid var(--border-light); white-space: nowrap; }
+        #top-info-bar span { margin: 0 8px; }
+        @media (max-width: 480px) { #top-info-bar { font-size: 0.65rem; } #top-info-bar span { margin: 0 4px; } }
+
+        /* --- MEJORA 2: ESTILOS DEL PRELOADER --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: var(--bg-darker); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .preloader-content { text-align: center; }
+        .glitch-preloader {
+            font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; text-transform: uppercase;
+            position: relative; color: var(--text-white); letter-spacing: 2px; margin-bottom: 10px;
+        }
+        .glitch-preloader::before, .glitch-preloader::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        }
+        .glitch-preloader::before { left: 2px; text-shadow: -2px 0 var(--primary-red); animation: glitch-anim-1 2s infinite linear alternate-reverse; }
+        .glitch-preloader::after { left: -2px; text-shadow: -2px 0 blue; animation: glitch-anim-2 3s infinite linear alternate-reverse; }
+        #preloader p {
+            color: var(--text-gray); font-size: 1rem; font-weight: 300; letter-spacing: 3px; text-transform: uppercase;
+            animation: pulse-text 1.5s infinite;
+        }
+        @keyframes glitch-anim-1 { 0% { clip-path: inset(20% 0 80% 0); } 20% { clip-path: inset(60% 0 10% 0); } 40% { clip-path: inset(40% 0 50% 0); } 60% { clip-path: inset(80% 0 5% 0); } 80% { clip-path: inset(10% 0 70% 0); } 100% { clip-path: inset(30% 0 20% 0); } }
+        @keyframes glitch-anim-2 { 0% { clip-path: inset(10% 0 60% 0); } 20% { clip-path: inset(30% 0 20% 0); } 40% { clip-path: inset(70% 0 10% 0); } 60% { clip-path: inset(20% 0 50% 0); } 80% { clip-path: inset(50% 0 30% 0); } 100% { clip-path: inset(5% 0 80% 0); } }
+        @keyframes pulse-text { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* --- MEJORA 3: FONDO MÁS PROFESIONAL --- */
+        .particles-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -2; pointer-events: none; overflow: hidden;
+        }
+        .ambient-orb {
+            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3;
+            animation: float-orb 20s infinite ease-in-out alternate;
+        }
+        .orb-1 { width: 40vw; height: 40vw; background: var(--primary-red); top: -10%; left: -10%; }
+        .orb-2 { width: 30vw; height: 30vw; background: #500000; bottom: -10%; right: -5%; animation-duration: 25s; animation-direction: alternate-reverse; }
+        .orb-3 { width: 50vw; height: 50vw; background: rgba(230,0,0,0.1); top: 30%; left: 20%; animation-duration: 30s; }
+        @keyframes float-orb { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(5%, 5%) scale(1.1); } }
+
+        #emoji-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; overflow: hidden; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .highlight { color: var(--primary-red); text-shadow: 0 0 20px rgba(230, 0, 0, 0.4); }
+        .hidden { display: none !important; }
+
+        header { position: fixed; top: 30px; width: 100%; background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; justify-content: space-between; align-items: center; padding: 18px 5%; z-index: 1000; border-bottom: 1px solid var(--border-light); transition: all 0.3s ease; }
+        .logo a { color: var(--text-white); text-decoration: none; font-size: 1.6rem; font-weight: 900; letter-spacing: -0.5px; text-transform: uppercase; }
+        .nav-links { list-style: none; display: flex; gap: 35px; }
+        .nav-links a { color: var(--text-gray); text-decoration: none; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; position: relative; }
+        .nav-links a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary-red); transition: width 0.3s ease; }
+        .nav-links a:hover { color: var(--text-white); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .live-indicator { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.85rem; color: var(--primary-red); background: rgba(230, 0, 0, 0.1); padding: 6px 12px; border-radius: 50px; border: 1px solid rgba(230, 0, 0, 0.2); letter-spacing: 1px; }
+        .dot { width: 8px; height: 8px; background-color: var(--primary-red); border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(230, 0, 0, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(230, 0, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(230, 0, 0, 0); } }
+
+        .menu-toggle { display: none; flex-direction: column; cursor: pointer; gap: 6px; z-index: 1001; }
+        .menu-toggle span { width: 28px; height: 2px; background-color: var(--text-white); transition: 0.4s ease; }
+        .menu-toggle.active span:nth-child(1) { transform: rotate(-45deg) translate(-5px, 6px); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
+
+        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; padding-top: 110px; overflow: hidden; }
+        .hero-content { z-index: 2; max-width: 900px; padding: 0 20px; }
+        .hero h1 { font-size: clamp(3.5rem, 8vw, 6.5rem); font-weight: 900; line-height: 1.05; margin-bottom: 25px; text-transform: uppercase; letter-spacing: -2px; }
+        .hero p { font-size: clamp(1rem, 2vw, 1.3rem); color: var(--text-gray); margin-bottom: 40px; font-weight: 300; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .btn-primary { display: inline-block; background-color: var(--primary-red); color: var(--text-white); padding: 16px 40px; text-decoration: none; font-size: 1rem; font-weight: 800; border-radius: 50px; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 20px rgba(230, 0, 0, 0.3); border: 2px solid transparent; cursor: pointer; }
+        .btn-primary:hover { background-color: var(--primary-red-hover); box-shadow: 0 10px 30px var(--red-glow); transform: translateY(-5px) scale(1.02); border-color: rgba(255,255,255,0.2); }
+        .studio-light { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(230,0,0,0.15) 0%, transparent 60%); z-index: 1; pointer-events: none; filter: blur(50px); }
+
+        .live-section { padding: 120px 0; background-color: var(--bg-darker); position: relative; }
+        .live-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--primary-red), transparent); opacity: 0.3; }
+        .section-title { font-size: clamp(2.5rem, 5vw, 3.5rem); text-align: center; margin-bottom: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; }
+        .subtitle { text-align: center; color: var(--text-gray); margin-bottom: 60px; font-size: 1.1rem; }
+        .video-container { width: 100%; max-width: 1100px; margin: 0 auto; aspect-ratio: 16 / 9; background: #000; border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 30px rgba(230,0,0,0.1); position: relative; }
+        .video-container iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
+
+        .box-panel { background: rgba(25, 25, 25, 0.8); border: 1px solid var(--border-light); padding: 30px; border-radius: 12px; max-width: 800px; margin: 0 auto 40px auto; text-align: center; backdrop-filter: blur(10px); }
+        .box-panel.aviso { background: rgba(230, 0, 0, 0.05); border-color: rgba(230, 0, 0, 0.2); box-shadow: 0 0 20px rgba(230, 0, 0, 0.1); }
+        .box-panel h3 { color: var(--primary-red); font-size: 1.4rem; margin-bottom: 15px; text-transform: uppercase; font-weight: 900; }
+        .qa-input { width: 100%; max-width: 400px; padding: 12px 20px; border-radius: 50px; border: 1px solid var(--border-light); background: rgba(0,0,0,0.5); color: white; font-size: 1rem; margin-bottom: 15px; outline: none; }
+        .qa-input:focus { border-color: var(--primary-red); }
+
+        .hosts-section { padding: 120px 0; position: relative; }
+        .hosts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 50px; }
+        .host-card { background: var(--bg-card); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--border-light); border-radius: 16px; padding: 40px 20px; text-align: center; transition: all 0.4s ease; }
+        .host-card:hover { transform: translateY(-10px); border-color: rgba(230, 0, 0, 0.4); box-shadow: 0 15px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(230,0,0,0.05); }
+        .host-img { width: 160px; height: 160px; margin: 0 auto 25px; border-radius: 50%; background-size: cover; background-position: center; background-color: #222; border: 3px solid transparent; background-clip: padding-box; position: relative; transition: all 0.4s ease; }
+        .host-img::before { content: ''; position: absolute; top: -5px; right: -5px; bottom: -5px; left: -5px; z-index: -1; border-radius: 50%; background: linear-gradient(45deg, var(--primary-red), transparent); opacity: 0; transition: opacity 0.4s ease; }
+        .host-card:hover .host-img::before { opacity: 1; }
+        .host-card h3 { font-size: 1.6rem; margin-bottom: 10px; font-weight: 800; }
+        .host-card p { color: var(--text-gray); font-size: 1rem; font-weight: 300; }
+        .guest-highlight { border-color: rgba(230, 0, 0, 0.3); background: rgba(30, 5, 5, 0.6); margin-bottom: 80px; }
+
+        footer { background-color: var(--bg-darker); padding: 80px 0 30px; border-top: 1px solid var(--border-light); }
+        .footer-content { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 60px; flex-wrap: wrap; gap: 40px; }
+        .footer-info { max-width: 300px; }
+        .footer-logo h2 { font-size: 2.2rem; font-weight: 900; color: var(--text-white); letter-spacing: -1px; margin-bottom: 5px; }
+        .footer-logo p { color: var(--text-gray); margin-bottom: 20px; }
+        .footer-contact p { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-contact a { color: var(--primary-red); text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: color 0.3s ease; }
+        .footer-contact a:hover { color: var(--text-white); text-shadow: 0 0 10px var(--red-glow); }
+        .social-links { display: flex; gap: 15px; flex-wrap: wrap; }
+        .social-btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; background-color: rgba(255,255,255,0.03); color: var(--text-white); text-decoration: none; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border: 1px solid var(--border-light); border-radius: 50px; transition: all 0.3s ease; }
+        .social-btn:hover { background-color: var(--primary-red); border-color: var(--primary-red); box-shadow: 0 10px 20px rgba(230,0,0,0.3); transform: translateY(-3px); }
+        .copyright { text-align: center; color: #555; font-size: 0.9rem; border-top: 1px solid var(--border-light); padding-top: 30px; }
+
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- MODO MANTENIMIENTO --- */
+        #mantenimiento-screen {
+            padding: 120px 20px;
+            text-align: center;
+            background-color: var(--bg-darker);
+            position: relative;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #mantenimiento-screen::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--primary-red), transparent); opacity: 0.3;
+        }
+        #mantenimiento-screen h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem); color: var(--text-white); margin-bottom: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px;
+        }
+        #mantenimiento-screen p {
+            color: var(--text-gray); font-size: 1.2rem; max-width: 600px; margin: 0 auto;
+        }
+
+        @media (max-width: 900px) { .footer-content { flex-direction: column; align-items: center; text-align: center; } .social-links { justify-content: center; } }
+        @media (max-width: 768px) {
+            header { padding: 15px 5%; }
+            .nav-links { position: fixed; top: 30px; right: -100%; width: 100%; height: calc(100vh - 30px); background-color: rgba(0, 0, 0, 0.98); flex-direction: column; justify-content: center; align-items: center; transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1); gap: 40px; z-index: 1000; }
+            .nav-links.active { right: 0; }
+            .nav-links a { font-size: 1.5rem; }
+            .menu-toggle { display: flex; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="top-info-bar">
+        <span>📍 Buenos Aires</span> | 
+        <span>🌡️ <span id="temp-val">--°C</span></span> | 
+        <span>🕒 <span id="time-val">--:--</span></span>
+    </div>
+
+    <div id="preloader">
+        <div class="preloader-content">
+            <h1 class="glitch-preloader" data-text="SIN GUION">SIN GUION</h1>
+            <p>Cargando...</p>
+        </div>
+    </div>
+
+    <div class="particles-bg">
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+        <div class="ambient-orb orb-3"></div>
+    </div>
+
+    <div id="emoji-container"></div>
+
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#en-vivo">En Vivo</a></li>
+                <li><a href="#conductores">Conductores</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+        <div class="live-indicator hidden" id="live-indicator"><span class="dot"></span> EN VIVO</div>
+        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+    </header>
+
+    <main>
+        <section id="inicio" class="hero fade-in">
+            <div class="hero-content">
+                <h1 class="title"><span class="glitch" data-text="La verdad,">La verdad,</span><br><span class="subtext">Esto es</span><br><span class="highlight">SIN GUION</span></h1>
+                <p>El podcast donde las ideas fluyen sin censura ni filtros. Únete a la conversación.</p>
+                
+            </div>
+            <div class="studio-light"></div>
+        </section>
+
+        <section id="mantenimiento-screen" class="hidden fade-in">
+            <div class="container">
+                <div class="logo" style="margin-bottom: 20px;"><a style="color: var(--text-white); text-decoration: none; font-size: 2.5rem; font-weight: 900; letter-spacing: -0.5px; text-transform: 
+                uppercase;">Sin Guión</a></div>
+                <h2>Estamos realizando <span class="highlight">mejoras</span></h2>
+                <p>Sin Guión se encuentra temporalmente en mantenimiento. Volveremos en breve.</p>
+            </div>
+        </section>
+
+        <section id="en-vivo" class="live-section fade-in">
+            <div class="container">
+                <h2 class="section-title">Transmisión <span class="highlight">Actual</span></h2>
+                <p class="subtitle">Conéctate al stream y participa en el chat.</p>
+                
+                <div id="seccion-avisos" class="box-panel aviso hidden">
+                    <h3>Desde el equipo de SG</h3>
+                    <p id="texto-aviso" style="font-size: 1.1rem; color: var(--text-white);"></p>
+                </div>
+
+                <div id="seccion-qa" class="box-panel hidden">
+                    <h3>❓ Pregunta del Día</h3>
+                    <p id="qa-text" style="font-size: 1.2rem; margin-bottom: 20px; font-weight: bold;"></p>
+                    <input type="text" id="qa-user-answer" class="qa-input" placeholder="Escribe tu respuesta acá...">
+                    <br><button id="btnSendAnswer" class="btn-primary" style="padding: 10px 20px;">Enviar Respuesta</button>
+                    <p id="qa-thanks" class="hidden" style="color: #10b981; margin-top: 15px; font-weight: bold;">¡Respuesta enviada al panel!</p>
+                </div>
+
+                <div style="display: flex; justify-content: center; align-items: center; margin: 60px 0;">
+                    <a href="https://twitch.tv/singuionok/live" target="_blank" rel="noopener noreferrer" class="btn-primary" style="font-size: 1.2rem; padding: 20px 50px; display: inline-flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.5rem;">🎥</span> Ir al Directo en Twitch
+                    </a>
+                </div>
+                </div>
+        </section>
+
+        <section id="conductores" class="hosts-section fade-in">
+            <div class="container">
+                
+                <div id="seccion-invitado" class="hidden">
+                    <h2 class="section-title">Invitado de la <span class="highlight">Semana</span></h2>
+                    <p class="subtitle">La figura especial de esta edición.</p>
+                    <div class="hosts-grid" style="margin-bottom: 80px; display: flex; justify-content: center;">
+                        <div class="host-card guest-highlight" style="max-width: 400px; width: 100%;">
+                            <div class="host-img" style="background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=300&h=300');"></div>
+                            <h3 id="nombre-invitado">Cargando...</h3>
+                            <p id="desc-invitado">Cargando descripción...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title">Nuestros <span class="highlight">Conductores</span></h2>
+                <p class="subtitle">Las voces detrás del micrófono.</p>
+                
+                <div class="hosts-grid" id="conductores-container">
+                    <p style="color: var(--text-gray); text-align: center; width: 100%;">Cargando conductores...</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="historial-invitados" class="hosts-section fade-in">
+            <div class="container">
+                <h2 class="section-title">Historial de <span class="highlight">Invitados</span></h2>
+                <p class="subtitle">Todos los que pasaron por nuestro micrófono.</p>
+                
+                <div class="hosts-grid" id="historial-container">
+                    <p style="color: var(--text-gray); text-align: center; width: 100%;">Cargando historial...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer id="contacto">
+        <div class="container footer-content">
+            <div class="footer-info">
+                <div class="footer-logo">
+                    <h2>SIN GUION</h2>
+                    <p>El podcast definitivo.</p>
+                </div>
+                <div class="footer-contact">
+                    <p>Contacto Comercial:</p>
+                    <a href="mailto:singuion.online@gmail.com">Contact Us - Support</a>
+                </div>
+                <div class="social-links">
+                    <a href="https://instagram.com/singuion.ok" target="_blank" class="social-btn">Instagram</a>
+                    <a href="https://twitch.tv/singuionok" target="_blank" class="social-btn">Twitch</a>
+                    <a href="https://www.youtube.com/channel/UCz6Hehz9jTcnHHTD45Oo63g" target="_blank" class="social-btn">YouTube</a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright"><p>&copy; 2026 Sin Guión. Todos los derechos reservados.</p></div>
+    </footer>
+
+    <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getFirestore, doc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+import {
+  getMessaging,
+  getToken,
+  onMessage
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-messaging.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4AwrIiysPn9oZesp8Y22CtEXAXvAtU6A",
+            authDomain: "singuion-online.firebaseapp.com",
+            projectId: "singuion-online",
+            storageBucket: "singuion-online.firebasestorage.app",
+            messagingSenderId: "964107619893",
+            appId: "1:964107619893:web:079efa431eaf011517ab7c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const messaging = getMessaging(app);
+        async function activarNotificaciones() {
+    try {
+        const permiso = await Notification.requestPermission();
+        if (permiso !== "granted") {
+            alert("No se otorgó permiso para las notificaciones.");
+            return;
+        }
+        const token = await getToken(messaging, {
+            vapidKey: "BCyn6dBwIEhYjruHSq8Kt9TYvqOTU1PIK9GM4LHTypuLtlMh5EVk1XuuNg7IQq0J8ZmTJLUnKmZ4NyRdyldPaew"
+        });
+        console.log("TOKEN FCM:", token);
+        alert("Notificaciones activadas. Revisá la consola (F12).");
+    } catch (error) {
+        console.error("Error al activar notificaciones:", error);
+    }
+}
+window.activarNotificaciones = activarNotificaciones;
+
+        let titleInterval = null;
+        let isRedDot = true;
+        const defaultTitle = "Sin Guión | Podcast & Radio en Vivo";
+
+        // MODO MANTENIMIENTO
+        onSnapshot(doc(db, "settings", "maintenance"), (docSnap) => {
+            const secMantenimiento = document.getElementById('mantenimiento-screen');
+            const secEnVivo = document.getElementById('en-vivo');
+            const secConductores = document.getElementById('conductores');
+            const secHistorial = document.getElementById('historial-invitados');
+
+            if (docSnap.exists() && docSnap.data().isActive) {
+                if(secEnVivo) secEnVivo.classList.add('hidden');
+                if(secConductores) secConductores.classList.add('hidden');
+                if(secHistorial) secHistorial.classList.add('hidden');
+                if(secMantenimiento) secMantenimiento.classList.remove('hidden');
+            } else {
+                if(secEnVivo) secEnVivo.classList.remove('hidden');
+                if(secConductores) secConductores.classList.remove('hidden');
+                if(secHistorial) secHistorial.classList.remove('hidden');
+                if(secMantenimiento) secMantenimiento.classList.add('hidden');
+            }
+        });
+
+        // AVISOS Y VIVO
+        onSnapshot(doc(db, "settings", "stream"), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const isLive = data.isLive;
+                
+                document.getElementById('live-indicator').classList.toggle('hidden', !isLive);
+
+                if (isLive) {
+                    if (!titleInterval) {
+                        titleInterval = setInterval(() => {
+                            document.title = (isRedDot ? "🔴" : "⚫") + " EN VIVO | Sin Guión";
+                            isRedDot = !isRedDot;
+                        }, 800);
+                    }
+                } else {
+                    if (titleInterval) {
+                        clearInterval(titleInterval);
+                        titleInterval = null;
+                        document.title = defaultTitle;
+                    }
+                }
+
+                const seccionAvisos = document.getElementById('seccion-avisos');
+                if (data.message && data.message.trim() !== "") {
+                    document.getElementById('texto-aviso').innerText = data.message;
+                    seccionAvisos.classList.remove('hidden');
+                } else { seccionAvisos.classList.add('hidden'); }
+            }
+        });
+
+        // INVITADO DE LA SEMANA
+        onSnapshot(doc(db, "content", "guestOfTheWeek"), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const seccionInvitado = document.getElementById('seccion-invitado');
+                if (data.name && data.name.trim() !== "") {
+                    document.getElementById('nombre-invitado').innerText = data.name;
+                    document.getElementById('desc-invitado').innerText = data.description || "";
+                    seccionInvitado.classList.remove('hidden');
+                } else { seccionInvitado.classList.add('hidden'); }
+            }
+        });
+
+        // PREGUNTAS
+        onSnapshot(doc(db, "content", "question"), (docSnap) => {
+            const seccionQA = document.getElementById('seccion-qa');
+            if (docSnap.exists() && docSnap.data().isActive) {
+                document.getElementById('qa-text').innerText = docSnap.data().text;
+                seccionQA.classList.remove('hidden');
+                document.getElementById('qa-user-answer').value = ''; 
+                document.getElementById('qa-thanks').classList.add('hidden');
+            } else { seccionQA.classList.add('hidden'); }
+        });
+
+        document.getElementById('btnSendAnswer').addEventListener('click', async () => {
+            const answerText = document.getElementById('qa-user-answer').value;
+            if (!answerText.trim()) return;
+            try {
+                await addDoc(collection(db, "answers"), { text: answerText, timestamp: new Date().getTime() });
+                document.getElementById('qa-thanks').classList.remove('hidden');
+                document.getElementById('qa-user-answer').value = '';
+            } catch (error) { console.error("Error", error); }
+        });
+
+        // TEMA
+        onSnapshot(doc(db, "settings", "theme"), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.colors && data.colors.length === 3) {
+                    const bg = `radial-gradient(circle at 15% 20%, ${data.colors[0]}40 0%, transparent 40%), radial-gradient(circle at 85% 50%, ${data.colors[1]}40 0%, transparent 40%), radial-gradient(circle at 50% 90%, ${data.colors[2]}40 0%, transparent 40%), var(--bg-dark)`;
+                    document.body.style.background = bg;
+                }
+                if (data.emojis && data.emojis.length === 5) {
+                    const container = document.getElementById('emoji-container');
+                    container.innerHTML = ''; 
+                    data.emojis.forEach(emojiText => {
+                        if(!emojiText) return;
+                        for(let i=0; i<10; i++) {
+                            const el = document.createElement('div');
+                            el.innerText = emojiText; el.style.position = 'absolute';
+                            el.style.left = Math.floor(Math.random() * 100) + 'vw';
+                            el.style.top = Math.floor(Math.random() * 100) + 'vh';
+                            el.style.fontSize = (Math.random() * 3 + 1) + 'rem';
+                            if (Math.random() > 0.5) {
+                                el.style.filter = `blur(${Math.random() * 6 + 2}px)`; el.style.opacity = Math.random() * 0.3 + 0.1;
+                            } else {
+                                el.style.filter = `blur(${Math.random() * 2}px)`; el.style.opacity = Math.random() * 0.6 + 0.2;
+                            }
+                            container.appendChild(el);
+                        }
+                    });
+                }
+            }
+        });
+
+        // CONDUCTORES DINÁMICOS
+        onSnapshot(doc(db, "content", "hosts"), (docSnap) => {
+            const container = document.getElementById('conductores-container');
+            const fotosFijas = ["img/anto.png", "img/Lolo.png", "img/renata.png"];
+
+            if (docSnap.exists() && docSnap.data().list && docSnap.data().list.length > 0) {
+                const hosts = docSnap.data().list;
+                container.innerHTML = ''; 
+                hosts.forEach((host, index) => {
+                    const imageUrl = fotosFijas[index] || `https://placehold.co/300x300/222/555?text=Foto+${index + 1}`;
+                    container.innerHTML += `
+                        <div class="host-card">
+                            <div class="host-img" style="background-image: url('${imageUrl}');"></div>
+                            <h3>${host.name || 'Sin Nombre'}</h3>
+                            <p>${host.desc || ''}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = '<p style="color: var(--text-gray); text-align: center; width: 100%;">No hay conductores cargados actualmente.</p>';
+            }
+        });
+
+        // CORREGIDO: HISTORIAL DE INVITADOS CONECTADO AL PANEL DE ACCESO
+        const fotosInvitadosHistorial = {
+            1: "img/youknow.png",
+            2: "img/invitados/invitado2.png",
+            3: "img/invitados/invitado3.png"
+        };
+
+        // Escucha el documento correcto "content/guests" donde el panel de control guarda la lista
+        onSnapshot(doc(db, "content", "guests"), (docSnap) => {
+            const container = document.getElementById('historial-container');
+            
+            if (docSnap.exists() && docSnap.data().list && docSnap.data().list.length > 0) {
+                const guests = docSnap.data().list;
+                container.innerHTML = '';
+                
+                guests.forEach((guest, index) => {
+                    const guestNumber = index + 1;
+                    const formattedNumber = "#" + String(guestNumber).padStart(3, '0');
+                    const imageUrl = fotosInvitadosHistorial[guestNumber] || `https://placehold.co/300x300/222/555?text=Foto+${formattedNumber}`;
+                    
+                    container.innerHTML += `
+                        <div class="host-card">
+                            <div class="host-img" style="background-image: url('${imageUrl}');"></div>
+                            <p style="color: var(--primary-red); font-weight: 900; font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 5px;">${formattedNumber}</p>
+                            <h3>${guest.name || 'Sin Nombre'}</h3>
+                            <p>${guest.desc || ''}</p>
+                        </div>
+                    `;
+                });
+            } else {
+                container.innerHTML = '<p style="color: var(--text-gray); text-align: center; width: 100%;">Aún no hay invitados registrados en el historial.</p>';
+            }
+        });
+    </script>
+
+    <script>
+        // SCRIPT API HORA Y CLIMA
+        function updateTime() {
+            const timeString = new Intl.DateTimeFormat('es-AR', {
+                timeZone: 'America/Argentina/Buenos_Aires',
+                hour: '2-digit', minute: '2-digit', hour12: false
+            }).format(new Date());
+            document.getElementById('time-val').innerText = timeString;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        async function fetchTemp() {
+            try {
+                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-34.6131&longitude=-58.3772&current_weather=true');
+                const data = await res.json();
+                if (data && data.current_weather) {
+                    document.getElementById('temp-val').innerText = Math.round(data.current_weather.temperature) + '°C';
+                }
+            } catch (e) { console.error("Error cargando clima: ", e); }
+        }
+        fetchTemp();
+        setInterval(fetchTemp, 600000); // Se actualiza cada 10 minutos
+
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+            }, 0);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const navLinks = document.querySelector('.nav-links');
+            mobileMenu.addEventListener('click', () => {
+                navLinks.classList.toggle('active'); mobileMenu.classList.toggle('active'); 
+                document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : 'auto';
+            });
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) { navLinks.classList.remove('active'); mobileMenu.classList.remove('active'); document.body.style.overflow = 'auto'; }
+                });
+            });
+
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) { navbar.style.background = 'rgba(0, 0, 0, 0.9)'; navbar.style.padding = '12px 5%'; } 
+                else { navbar.style.background = 'rgba(5, 5, 5, 0.7)'; navbar.style.padding = '18px 5%'; }
+            });
+
+            const fadeElements = document.querySelectorAll('.fade-in');
+            const appearOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+            const appearOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, appearOptions);
+
+            fadeElements.forEach(el => {
+                appearOnScroll.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

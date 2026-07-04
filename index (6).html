@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Sin Guión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-base: #050505; --bg-surface: #121212; --bg-card: #1e1e1e; --primary: #e60000; --primary-hover: #ff1a1a; --text-main: #ffffff; --text-muted: #a0a0a0; --border: #2a2a2a; --success: #10b981; --error: #ef4444; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; padding: 20px; }
+        .hidden { display: none !important; }
+
+        .login-wrapper { display: flex; align-items: center; justify-content: center; width: 100%; }
+        .dashboard-wrapper { width: 100%; max-width: 1000px; padding-top: 40px; }
+        .card { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        h1 { font-weight: 800; font-size: 1.8rem; }
+        .highlight { color: var(--primary); }
+        h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
+        input[type="email"], input[type="password"], input[type="text"] { width: 100%; padding: 14px 16px; background-color: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main); border-radius: 8px; font-size: 1rem; transition: border-color 0.3s; }
+        input:focus { outline: none; border-color: var(--primary); }
+        .color-picker { width: 100%; height: 50px; border: none; border-radius: 8px; cursor: pointer; background: transparent; }
+        .emoji-input { width: 50px; text-align: center; font-size: 1.5rem; }
+        .flex-row { display: flex; gap: 10px; }
+
+        .btn { background-color: var(--primary); color: white; border: none; padding: 14px 24px; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; width: 100%; }
+        .btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+        .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background-color: var(--bg-surface); border-color: var(--text-muted); }
+        .btn-small { padding: 10px 16px; font-size: 0.9rem; width: auto; }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+
+        .toggle-container { display: flex; align-items: center; justify-content: space-between; background: var(--bg-surface); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .toast { position: fixed; bottom: 30px; right: 30px; padding: 16px 24px; border-radius: 8px; font-weight: 600; color: white; transform: translateY(100px); opacity: 0; transition: all 0.4s; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background-color: var(--success); }
+        .toast.error { background-color: var(--error); }
+        .answer-box { background: var(--bg-surface); border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.95rem; }
+        .answer-list { max-height: 250px; overflow-y: auto; padding-right: 10px; }
+    </style>
+</head>
+<body>
+
+
+    <div id="login-screen" class="login-wrapper">
+        <div class="card" style="width: 100%; max-width: 400px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="font-size: 2rem;"><span class="highlight">SIN</span> GUION</h1>
+                <p style="color: var(--text-muted); margin-top: 5px;">Acceso administrativo</p>
+            </div>
+            <div class="form-group"><label>Correo Electrónico</label><input type="email" id="email" placeholder="admin@singuion.online"></div>
+            <div class="form-group"><label>Contraseña</label><input type="password" id="password" placeholder="••••••••"></div>
+            <button id="btnLogin" class="btn" style="margin-top: 10px;">Ingresar al Sistema</button>
+        </div>
+    </div>
+
+    <div id="dashboard-screen" class="dashboard-wrapper hidden">
+        <div class="header">
+            <div>
+                <h1>Panel de <span class="highlight">Control</span></h1>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Modifica los datos de la web en tiempo real.</p>
+            </div>
+            <button id="btnLogout" class="btn btn-outline btn-small">Cerrar Sesión</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
+            
+            <div class="card" style="border: 1px solid var(--primary);">
+                <h3>🛠️ Modo Mantenimiento</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Oculta el contenido principal y muestra la pantalla de mantenimiento. Secciones como Inicio y Footer seguirán visibles.</p>
+                <div class="toggle-container">
+                    <div>
+                        <strong style="display: block;">Activar Mantenimiento</strong>
+                    </div>
+                    <label class="switch"><input type="checkbox" id="maintenanceToggle"><span class="slider"></span></label>
+                </div>
+                <button id="btnSaveMaintenance" class="btn">Guardar Estado</button>
+            </div>
+
+            <div class="card">
+                <h3>🔴 Estado de Transmisión</h3>
+                <div class="toggle-container">
+                    <div>
+                        <strong style="display: block;">Indicador "EN VIVO"</strong>
+                    </div>
+                    <label class="switch"><input type="checkbox" id="liveToggle"><span class="slider"></span></label>
+                </div>
+                <div class="form-group">
+                    <label>Aviso / Anuncio Global</label>
+                    <input type="text" id="liveMessage" placeholder="Ej: ¡Ya estamos streameando!">
+                </div>
+                <button id="btnSaveLive" class="btn">Guardar Transmisión</button>
+            </div>
+
+            <div class="card">
+                <h3>⭐ Invitado de la Semana</h3>
+                <div class="form-group">
+                    <input type="text" id="guestName" placeholder="Nombre (Ej: Coscu)">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="guestDesc" placeholder="Descripción o Profesión">
+                </div>
+                <div class="btn-group">
+                    <button id="btnSaveGuest" class="btn">Actualizar</button>
+                    <button id="btnClearGuest" class="btn btn-outline">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>👥 Lista de Invitados</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Añadí o quitá múltiples invitados para la transmisión actual.</p>
+                
+                <div id="guestsListAdmin"></div>
+
+                <div class="btn-group">
+                    <button id="btnAddGuest" class="btn btn-outline" style="border-style: dashed;">+ Agregar Invitado</button>
+                </div>
+                <button id="btnSaveGuests" class="btn" style="margin-top: 15px;">Guardar Lista de Invitados</button>
+            </div>
+
+            <div class="card">
+                <h3>🎙️ Nuestros Conductores</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Añadí o quitá conductores. La foto se asigna sola.</p>
+                
+                <div id="hostsListAdmin"></div>
+
+                <div class="btn-group">
+                    <button id="btnAddHost" class="btn btn-outline" style="border-style: dashed;">+ Agregar Conductor</button>
+                </div>
+                <button id="btnSaveHosts" class="btn" style="margin-top: 15px;">Guardar Lista de Conductores</button>
+            </div>
+
+            <div class="card">
+                <h3>❓ Pregunta del Día</h3>
+                <div class="form-group">
+                    <input type="text" id="questionText" placeholder="Ej: ¿Mejor juego del año?">
+                </div>
+                <div class="btn-group">
+                    <button id="btnSendQuestion" class="btn">Publicar Pregunta</button>
+                    <button id="btnStopQuestion" class="btn btn-outline">Ocultar</button>
+                </div>
+                <h4 style="margin: 25px 0 15px 0; color: var(--text-muted);">Respuestas en vivo:</h4>
+                <div id="answersContainer" class="answer-list"></div>
+                <button id="btnClearAnswers" class="btn btn-outline" style="margin-top: 15px; border-color: var(--error); color: var(--error);">Borrar todas las respuestas</button>
+            </div>
+
+            <div class="card">
+                <h3>🎨 Tema y Fondo</h3>
+                <label>Colores Difuminados (Fondo)</label>
+                <div class="flex-row" style="margin-bottom: 20px;">
+                    <input type="color" id="color1" class="color-picker" value="#e60000">
+                    <input type="color" id="color2" class="color-picker" value="#ff8800">
+                    <input type="color" id="color3" class="color-picker" value="#8800ff">
+                </div>
+                <label>5 Emojis Flotantes</label>
+                <div class="flex-row" style="margin-bottom: 20px; justify-content: space-between;">
+                    <input type="text" id="emoji1" class="emoji-input" value="🔥" maxlength="2">
+                    <input type="text" id="emoji2" class="emoji-input" value="⭐" maxlength="2">
+                    <input type="text" id="emoji3" class="emoji-input" value="🎙️" maxlength="2">
+                    <input type="text" id="emoji4" class="emoji-input" value="🚀" maxlength="2">
+                    <input type="text" id="emoji5" class="emoji-input" value="🍕" maxlength="2">
+                </div>
+                <button id="btnSaveTheme" class="btn">Aplicar Tema a la Web</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Mensaje</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4AwrIiysPn9oZesp8Y22CtEXAXvAtU6A",
+            authDomain: "singuion-online.firebaseapp.com",
+            projectId: "singuion-online",
+            storageBucket: "singuion-online.firebasestorage.app",
+            messagingSenderId: "964107619893",
+            appId: "1:964107619893:web:079efa431eaf011517ab7c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // UI & ALERTAS
+        const toast = document.getElementById('toast');
+        function showToast(msg, type = 'success') {
+            toast.textContent = msg; toast.className = `toast show ${type}`;
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // --- SISTEMA DINÁMICO DE CONDUCTORES ---
+        let adminHosts = [];
+        const hostsListAdmin = document.getElementById('hostsListAdmin');
+
+        function renderAdminHosts() {
+            hostsListAdmin.innerHTML = '';
+            adminHosts.forEach((host, index) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 10px; background: rgba(0,0,0,0.2);';
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label style="color: var(--primary); margin: 0;">Conductor ${index + 1}</label>
+                        <button type="button" class="btn btn-outline btn-small delete-host-btn" data-index="${index}" style="border-color: var(--error); color: var(--error); padding: 4px 10px;" title="Eliminar">X</button>
+                    </div>
+                    <input type="text" class="host-name-input" data-index="${index}" value="${host.name || ''}" placeholder="Nombre" style="margin-bottom: 10px; width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border); color: white; border-radius: 6px;">
+                    <input type="text" class="host-desc-input" data-index="${index}" value="${host.desc || ''}" placeholder="Descripción" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border); color: white; border-radius: 6px;">
+                `;
+                hostsListAdmin.appendChild(div);
+            });
+        }
+
+        function saveHostsInputsToArray() {
+            const nameInputs = document.querySelectorAll('.host-name-input');
+            const descInputs = document.querySelectorAll('.host-desc-input');
+            nameInputs.forEach(input => {
+                const idx = input.getAttribute('data-index');
+                if(adminHosts[idx]) adminHosts[idx].name = input.value;
+            });
+            descInputs.forEach(input => {
+                const idx = input.getAttribute('data-index');
+                if(adminHosts[idx]) adminHosts[idx].desc = input.value;
+            });
+        }
+
+        hostsListAdmin.addEventListener('click', (e) => {
+            if(e.target.classList.contains('delete-host-btn')) {
+                saveHostsInputsToArray(); 
+                const idx = e.target.getAttribute('data-index');
+                adminHosts.splice(idx, 1); 
+                renderAdminHosts(); 
+            }
+        });
+
+        document.getElementById('btnAddHost').addEventListener('click', () => {
+            saveHostsInputsToArray();
+            adminHosts.push({ name: '', desc: '' });
+            renderAdminHosts();
+        });
+
+
+        // --- SISTEMA DINÁMICO DE INVITADOS ---
+        let adminGuests = [];
+        const guestsListAdmin = document.getElementById('guestsListAdmin');
+
+        function renderAdminGuests() {
+            guestsListAdmin.innerHTML = '';
+            adminGuests.forEach((guest, index) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 10px; background: rgba(0,0,0,0.2);';
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label style="color: var(--primary); margin: 0;">Invitado ${index + 1}</label>
+                        <button type="button" class="btn btn-outline btn-small delete-guest-btn" data-index="${index}" style="border-color: var(--error); color: var(--error); padding: 4px 10px;" title="Eliminar">X</button>
+                    </div>
+                    <input type="text" class="guest-name-input" data-index="${index}" value="${guest.name || ''}" placeholder="Nombre" style="margin-bottom: 10px; width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border); color: white; border-radius: 6px;">
+                    <input type="text" class="guest-desc-input" data-index="${index}" value="${guest.desc || ''}" placeholder="Descripción o Profesión" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border); color: white; border-radius: 6px;">
+                `;
+                guestsListAdmin.appendChild(div);
+            });
+        }
+
+        function saveGuestsInputsToArray() {
+            const nameInputs = document.querySelectorAll('.guest-name-input');
+            const descInputs = document.querySelectorAll('.guest-desc-input');
+            nameInputs.forEach(input => {
+                const idx = input.getAttribute('data-index');
+                if(adminGuests[idx]) adminGuests[idx].name = input.value;
+            });
+            descInputs.forEach(input => {
+                const idx = input.getAttribute('data-index');
+                if(adminGuests[idx]) adminGuests[idx].desc = input.value;
+            });
+        }
+
+        guestsListAdmin.addEventListener('click', (e) => {
+            if(e.target.classList.contains('delete-guest-btn')) {
+                saveGuestsInputsToArray(); 
+                const idx = e.target.getAttribute('data-index');
+                adminGuests.splice(idx, 1); 
+                renderAdminGuests(); 
+            }
+        });
+
+        document.getElementById('btnAddGuest').addEventListener('click', () => {
+            saveGuestsInputsToArray();
+            adminGuests.push({ name: '', desc: '' });
+            renderAdminGuests();
+        });
+
+
+        // CARGAR DATOS ACTUALES AL ABRIR PANEL
+        async function loadCurrentData() {
+            try {
+                const mainSnap = await getDoc(doc(db, "settings", "maintenance"));
+                if(mainSnap.exists()) {
+                    document.getElementById('maintenanceToggle').checked = mainSnap.data().isActive || false;
+                }
+
+                const streamSnap = await getDoc(doc(db, "settings", "stream"));
+                if(streamSnap.exists()) {
+                    document.getElementById('liveToggle').checked = streamSnap.data().isLive || false;
+                    document.getElementById('liveMessage').value = streamSnap.data().message || "";
+                }
+                
+                const guestSnap = await getDoc(doc(db, "content", "guestOfTheWeek"));
+                if(guestSnap.exists()) {
+                    document.getElementById('guestName').value = guestSnap.data().name || "";
+                    document.getElementById('guestDesc').value = guestSnap.data().description || "";
+                }
+
+                const qSnap = await getDoc(doc(db, "content", "question"));
+                if(qSnap.exists()) { document.getElementById('questionText').value = qSnap.data().text || ""; }
+                
+                const themeSnap = await getDoc(doc(db, "settings", "theme"));
+                if(themeSnap.exists() && themeSnap.data().colors && themeSnap.data().emojis) {
+                    document.getElementById('color1').value = themeSnap.data().colors[0];
+                    document.getElementById('color2').value = themeSnap.data().colors[1];
+                    document.getElementById('color3').value = themeSnap.data().colors[2];
+                    document.getElementById('emoji1').value = themeSnap.data().emojis[0];
+                    document.getElementById('emoji2').value = themeSnap.data().emojis[1];
+                    document.getElementById('emoji3').value = themeSnap.data().emojis[2];
+                    document.getElementById('emoji4').value = themeSnap.data().emojis[3];
+                    document.getElementById('emoji5').value = themeSnap.data().emojis[4];
+                }
+
+                const hostsSnap = await getDoc(doc(db, "content", "hosts"));
+                if(hostsSnap.exists() && hostsSnap.data().list) {
+                    adminHosts = hostsSnap.data().list;
+                } else {
+                    adminHosts = [];
+                }
+                renderAdminHosts();
+
+                const guestsSnap = await getDoc(doc(db, "content", "guests"));
+                if(guestsSnap.exists() && guestsSnap.data().list) {
+                    adminGuests = guestsSnap.data().list;
+                } else {
+                    adminGuests = [];
+                }
+                renderAdminGuests();
+
+            } catch(e) { console.error(e); }
+        }
+
+        // AUTH
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard-screen').classList.remove('hidden');
+                loadCurrentData();
+            } else {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('dashboard-screen').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('btnLogin').addEventListener('click', () => {
+            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
+                .then(() => showToast("Ingreso exitoso"))
+                .catch(() => showToast("Credenciales inválidas", "error"));
+        });
+        document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
+
+        // GUARDAR ACCIONES
+
+        document.getElementById('btnSaveMaintenance').addEventListener('click', async () => {
+            await setDoc(doc(db, "settings", "maintenance"), { isActive: document.getElementById('maintenanceToggle').checked }, { merge: true });
+            showToast("Estado de mantenimiento guardado");
+        });
+
+        document.getElementById('btnSaveLive').addEventListener('click', async () => {
+            await setDoc(doc(db, "settings", "stream"), { isLive: document.getElementById('liveToggle').checked, message: document.getElementById('liveMessage').value });
+            showToast("Transmisión actualizada");
+        });
+
+        document.getElementById('btnSaveGuest').addEventListener('click', async () => {
+            await setDoc(doc(db, "content", "guestOfTheWeek"), { name: document.getElementById('guestName').value, description: document.getElementById('guestDesc').value });
+            showToast("Invitado actualizado");
+        });
+        document.getElementById('btnClearGuest').addEventListener('click', async () => {
+            document.getElementById('guestName').value = ''; document.getElementById('guestDesc').value = '';
+            await setDoc(doc(db, "content", "guestOfTheWeek"), { name: "", description: "" });
+            showToast("Invitado ocultado");
+        });
+
+        document.getElementById('btnSaveHosts').addEventListener('click', async () => {
+            saveHostsInputsToArray();
+            await setDoc(doc(db, "content", "hosts"), { list: adminHosts });
+            showToast("Lista de conductores guardada");
+        });
+
+        document.getElementById('btnSaveGuests').addEventListener('click', async () => {
+            saveGuestsInputsToArray();
+            await setDoc(doc(db, "content", "guests"), { list: adminGuests });
+            showToast("Lista de invitados guardada");
+        });
+
+        // PREGUNTAS Y RESPUESTAS
+        document.getElementById('btnSendQuestion').addEventListener('click', async () => {
+            const txt = document.getElementById('questionText').value;
+            if(!txt) return showToast("Escribí una pregunta", "error");
+            await setDoc(doc(db, "content", "question"), { text: txt, isActive: true });
+            showToast("Pregunta publicada");
+        });
+        document.getElementById('btnStopQuestion').addEventListener('click', async () => {
+            await setDoc(doc(db, "content", "question"), { text: "", isActive: false });
+            showToast("Pregunta ocultada");
+        });
+        
+        onSnapshot(collection(db, "answers"), (snapshot) => {
+            const container = document.getElementById('answersContainer');
+            container.innerHTML = '';
+            let answers = [];
+            snapshot.forEach(doc => answers.push({ id: doc.id, ...doc.data() }));
+            answers.sort((a, b) => b.timestamp - a.timestamp);
+            if(answers.length === 0) { container.innerHTML = '<p style="color: #555;">No hay respuestas todavía.</p>'; return; }
+            answers.forEach(ans => {
+                const div = document.createElement('div'); div.className = 'answer-box'; div.innerText = ans.text;
+                container.appendChild(div);
+            });
+        });
+
+        document.getElementById('btnClearAnswers').addEventListener('click', async () => {
+            if(!confirm("¿Borrar todo?")) return;
+            const querySnapshot = await getDocs(collection(db, "answers"));
+            querySnapshot.forEach(async (documento) => await deleteDoc(doc(db, "answers", documento.id)));
+            showToast("Respuestas eliminadas");
+        });
+
+        // TEMA Y EMOJIS
+        document.getElementById('btnSaveTheme').addEventListener('click', async () => {
+            const colors = [document.getElementById('color1').value, document.getElementById('color2').value, document.getElementById('color3').value];
+            const emojis = [document.getElementById('emoji1').value, document.getElementById('emoji2').value, document.getElementById('emoji3').value, document.getElementById('emoji4').value, document.getElementById('emoji5').value];
+            await setDoc(doc(db, "settings", "theme"), { colors, emojis });
+            showToast("Tema actualizado en la web");
+        });
+    </script>
+</body>
+</html>
